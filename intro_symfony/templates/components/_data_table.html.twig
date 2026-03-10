@@ -1,0 +1,23 @@
+{% set tableClass = tableClass|default('table table-dark table-hover mb-0') %}
+
+<div class="card bg-dark border-secondary">
+    <div class="card-header border-secondary text-white">
+        <h5 class="mb-0">{{ title }}</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="{{ tableClass }}">
+                <thead>
+                    <tr>
+                        {% for header in headers %}
+                            <th>{{ header }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ content|raw }}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

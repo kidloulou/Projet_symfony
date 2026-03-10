@@ -1,0 +1,34 @@
+{% set cardClass = cardClass|default('bg-dark border-secondary text-white shadow') %}
+{% set headerClass = headerClass|default('border-secondary bg-transparent py-3') %}
+{% set bodyClass = bodyClass|default('p-4') %}
+{% set footerClass = footerClass|default('border-secondary bg-transparent text-center py-3') %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card {{ cardClass }}">
+            
+            {% if headerTitle is defined or headerActions is defined %}
+                <div class="card-header {{ headerClass }} {% if headerActions is defined %}d-flex justify-content-between align-items-center{% endif %}">
+                    {% if headerTitle is defined %}
+                        <h1 class="h3 card-title mb-0 text-primary">{{ headerTitle }}</h1>
+                    {% endif %}
+                    
+                    {% if headerActions is defined %}
+                        {{ headerActions|raw }}
+                    {% endif %}
+                </div>
+            {% endif %}
+            
+            <div class="card-body {{ bodyClass }}">
+                {{ content|raw }}
+            </div>
+            
+            {% if footerContent is defined %}
+                <div class="card-footer {{ footerClass }}">
+                    {{ footerContent|raw }}
+                </div>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>

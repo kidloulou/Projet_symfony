@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LearnHub - Apprenez sans limite{% endblock %}
+
+{% block body %}
+    <div class="hero-section text-center shadow">
+        <h1 class="display-4 fw-bold">Développez vos compétences avec LearnHub</h1>
+        <p class="lead mb-4">La mini plateforme de cours en ligne pour apprendre et partager vos connaissances.</p>
+        {% if not app.user %}
+            <a href="{{ path('app_register') }}" class="btn btn-primary btn-lg px-4 gap-3">Commencer</a>
+            <a href="{{ path('app_login') }}" class="btn btn-outline-light btn-lg px-4">Connexion</a>
+        {% else %}
+            <a href="{{ path('app_article_index') }}" class="btn btn-primary btn-lg px-4">Voir les cours</a>
+            {% if is_granted('ROLE_PROF') %}
+                <a href="{{ path('app_article_new') }}" class="btn btn-outline-light btn-lg px-4">Créer un cours</a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="h3 border-bottom pb-2 mb-4 text-white">Derniers Cours</h2>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for article in latest_articles %}
+            <div class="col">
+                <div class="card h-100 text-white bg-dark border-secondary">
+                    <div class="card-body">
+                        <small class="text-muted">{{ article.createdAt|date('d/m/Y') }} par {{ article.author.email }}</small>
+                        <h5 class="card-title mt-2">{{ article.title }}</h5>
+                        <p class="card-text">{{ article.description|slice(0, 100) }}...</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-outline-primary w-100">Voir le cours</a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center text-muted">
+                <p>Aucun cours pour le moment.</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

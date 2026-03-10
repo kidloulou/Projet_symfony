@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil de {{ user.email }}{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- En-tête du profil -->
+            <div class="card bg-dark border-secondary text-white shadow mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white fw-bold me-3" style="width: 60px; height: 60px; font-size: 24px;">
+                                {{ user.email|first|upper }}
+                            </div>
+                            <div>
+                                <h1 class="h3 mb-1">{{ user.email }}</h1>
+                                <div>
+                                    {% if 'ROLE_ADMIN' in user.roles %}
+                                        <span class="badge bg-danger">Administrateur</span>
+                                    {% elseif 'ROLE_PROF' in user.roles %}
+                                        <span class="badge bg-success">Professeur</span>
+                                    {% else %}
+                                        <span class="badge bg-info">Élève</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="{{ path('app_admin_user_edit', {'id': user.id}) }}" class="btn btn-outline-warning">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                </svg>
+                                Modifier
+                            </a>
+                            <a href="{{ path('app_admin_user_index') }}" class="btn btn-outline-secondary">
+                                Retour à la liste
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card bg-dark border-primary h-100">
+                        <div class="card-body text-center">
+                            <h3 class="h1 text-primary mb-2">{{ user.articles|length }}</h3>
+                            <p class="text-muted mb-0">Cours créés</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-dark border-success h-100">
+                        <div class="card-body text-center">
+                            <h3 class="h1 text-success mb-2">{{ user.comments|length }}</h3>
+                            <p class="text-muted mb-0">Commentaires</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cours créés -->
+            {% if user.articles|length > 0 %}
+            <div class="card bg-dark border-secondary text-white shadow mb-4">
+                <div class="card-header border-secondary bg-transparent py-3">
+                    <h2 class="h5 mb-0">Cours créés ({{ user.articles|length }})</h2>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for article in user.articles %}
+                            <div class="list-group-item bg-dark border-secondary text-white d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ article.title }}</h6>
+                                    <small class="text-muted">{{ article.createdAt|date('d/m/Y H:i') }}</small>
+                                </div>
+                                <a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Commentaires récents -->
+            {% if user.comments|length > 0 %}
+            <div class="card bg-dark border-secondary text-white shadow">
+                <div class="card-header border-secondary bg-transparent py-3">
+                    <h2 class="h5 mb-0">Commentaires récents ({{ user.comments|length }})</h2>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for comment in user.comments|slice(0, 5) %}
+                            <div class="list-group-item bg-dark border-secondary text-white">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <small class="text-muted">{{ comment.createdAt|date('d/m/Y H:i') }}</small>
+                                    <a href="{{ path('app_article_show', {'id': comment.article.id}) }}" class="btn btn-sm btn-outline-info">Voir le cours</a>
+                                </div>
+                                <p class="mb-1">{{ comment.content }}</p>
+                                <small class="text-muted">Sur : {{ comment.article.title }}</small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

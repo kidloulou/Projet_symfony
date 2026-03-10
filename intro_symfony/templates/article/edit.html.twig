@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le cours - LearnHub{% endblock %}
+
+{% block body %}
+    {% set deleteButton %}
+        {{ include('components/_delete_button.html.twig', {
+            deletePath: path('app_article_delete', {'id': article.id}),
+            csrfToken: csrf_token('delete' ~ article.id),
+            confirmMessage: 'Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible.',
+            buttonText: 'Supprimer'
+        }) }}
+    {% endset %}
+
+    {% set formContent %}
+        {{ include('article/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+    {% endset %}
+
+    {% set backLink %}
+        {{ include('components/_back_link.html.twig', {
+            path: path('app_article_index')
+        }) }}
+    {% endset %}
+
+    {{ include('components/_card_layout.html.twig', {
+        headerTitle: 'Modifier le cours',
+        headerActions: deleteButton,
+        content: formContent,
+        footerContent: backLink
+    }) }}
+{% endblock %}

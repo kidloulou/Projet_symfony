@@ -1,0 +1,22 @@
+{% set cardClass = cardClass|default('bg-dark h-100') %}
+{% set borderColor = borderColor|default('border-primary') %}
+{% set titleColor = titleColor|default('text-primary') %}
+{% set buttonColor = buttonColor|default('btn-outline-primary') %}
+
+<div class="card {{ cardClass }} {{ borderColor }}">
+    <div class="card-body text-center">
+        <h5 class="card-title {{ titleColor }}">{{ title }}</h5>
+        
+        {% if count is defined %}
+            <h2 class="text-white">{{ count }}</h2>
+        {% endif %}
+        
+        <p class="card-text text-muted">{{ description }}</p>
+        
+        {% if linkPath is defined %}
+            <a href="{{ linkPath }}" class="btn {{ buttonColor }} stretched-link">{{ linkText|default('Gérer') }}</a>
+        {% elseif buttonText is defined %}
+            <button class="btn {{ buttonColor }} {{ buttonDisabled ? 'disabled' : '' }}">{{ buttonText }}</button>
+        {% endif %}
+    </div>
+</div>

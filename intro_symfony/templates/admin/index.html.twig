@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4 text-white">Administration</h1>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            {{ include('components/_stat_card.html.twig', {
+                title: 'Utilisateurs',
+                count: users_count,
+                description: 'Inscrits sur la plateforme',
+                linkPath: path('app_admin_user_index'),
+                linkText: 'Gérer',
+                borderColor: 'border-primary',
+                titleColor: 'text-primary',
+                buttonColor: 'btn-outline-primary'
+            }) }}
+        </div>
+        
+        <div class="col-md-4">
+            {{ include('components/_stat_card.html.twig', {
+                title: 'Cours',
+                count: articles_count,
+                description: 'Disponibles en ligne',
+                linkPath: path('app_article_index'),
+                linkText: 'Voir Cours',
+                borderColor: 'border-success',
+                titleColor: 'text-success',
+                buttonColor: 'btn-outline-success'
+            }) }}
+        </div>
+        
+        <div class="col-md-4">
+            {{ include('components/_stat_card.html.twig', {
+                title: 'Statistiques',
+                description: 'Vue d\'ensemble de la plateforme.',
+                buttonText: 'Bientôt disponible',
+                buttonDisabled: true,
+                borderColor: 'border-info',
+                titleColor: 'text-info',
+                buttonColor: 'btn-outline-info'
+            }) }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            {% set tableContent %}
+                {% for user in recent_users %}
+                    <tr>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% for role in user.roles %}
+                                <span class="badge bg-secondary">{{ role }}</span>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a href="{{ path('app_admin_user_show', {'id': user.id}) }}" class="btn btn-sm btn-info">Voir</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">Aucun utilisateur inscrit.</td>
+                    </tr>
+                {% endfor %}
+            {% endset %}
+
+            {{ include('components/_data_table.html.twig', {
+                title: 'Derniers inscrits',
+                headers: ['Email', 'Rôles', 'Actions'],
+                content: tableContent
+            }) }}
+        </div>
+    </div>
+{% endblock %}

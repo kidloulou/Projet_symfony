@@ -1,0 +1,6 @@
+{% set linkText = linkText|default('Retour au catalogue') %}
+{% set linkClass = linkClass|default('btn btn-link text-muted text-decoration-none') %}
+
+<a href="{{ path }}" class="{{ linkClass }}">
+    &larr; {{ linkText }}
+</a>

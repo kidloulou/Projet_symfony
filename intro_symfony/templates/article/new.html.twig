@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Cours - LearnHub{% endblock %}
+
+{% block body %}
+    {% set formContent %}
+        {{ include('article/_form.html.twig', {'button_label': 'Publier le cours'}) }}
+    {% endset %}
+
+    {% set backLink %}
+        {{ include('components/_back_link.html.twig', {
+            path: path('app_article_index')
+        }) }}
+    {% endset %}
+
+    {{ include('components/_card_layout.html.twig', {
+        headerTitle: 'Créer un nouveau cours',
+        content: formContent,
+        footerContent: backLink
+    }) }}
+{% endblock %}

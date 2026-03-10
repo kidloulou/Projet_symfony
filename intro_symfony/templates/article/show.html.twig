@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <article class="mb-5">
+                <a href="{{ path('app_article_index') }}" class="btn btn-link text-muted text-decoration-none p-0 mb-3">&larr; Retour au catalogue</a>
+                <header class="mb-4">
+                    <h1 class="fw-bolder mb-1 text-primary">{{ article.title }}</h1>
+                    <div class="text-muted fst-italic mb-2">Publié le {{ article.createdAt|date('d/m/Y') }} par {{ article.author.email }}</div>
+                    {% if is_granted('ROLE_PROF') and (article.author == app.user or is_granted('ROLE_ADMIN')) %}
+                        <div class="mb-3 d-flex gap-2">
+                            <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                </svg>
+                                Modifier
+                            </a>
+                            <form method="post" action="{{ path('app_article_delete', {'id': article.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible.');" class="d-inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
+                                <button class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                                    </svg>
+                                    Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </header>
+                
+                <section class="mb-5">
+                    <p class="fs-5 mb-4 text-light opacity-75">{{ article.description }}</p>
+                    <hr class="text-secondary opacity-25">
+                    <div class="text-white">
+                        {{ article.content|nl2br }}
+                    </div>
+                </section>
+            </article>
+
+            <section class="mb-5">
+                <div class="card bg-dark border-secondary">
+                    <div class="card-body">
+                        <h3 class="h5 text-white mb-4">Commentaires ({{ article.comments|length }})</h3>
+                        
+                        {% if app.user %}
+                            <div class="mb-4">
+                                {{ form_start(comment_form) }}
+                                    <div class="mb-3">
+                                        {{ form_widget(comment_form.content, {'attr': {'class': 'form-control bg-dark text-white border-secondary', 'placeholder': 'Posez une question ou laissez un avis sur ce cours...', 'rows': 3}}) }}
+                                        <div class="form-text text-danger">{{ form_errors(comment_form.content) }}</div>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm">Poster</button>
+                                {{ form_end(comment_form) }}
+                            </div>
+                        {% else %}
+                            <div class="mb-4 p-3 bg-secondary bg-opacity-10 rounded text-light">
+                                <a href="{{ path('app_login') }}" class="text-primary">Connectez-vous</a> pour participer à la discussion.
+                            </div>
+                        {% endif %}
+
+                        {% for comment in article.comments %}
+                            <div class="d-flex mb-3 border-bottom border-secondary border-opacity-25 pb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold" style="width: 40px; height: 40px;">
+                                        {{ comment.author.email|first|upper }}
+                                    </div>
+                                </div>
+                                <div class="ms-3 w-100">
+                                    <div class="fw-bold text-white">{{ comment.author.email }} <span class="fw-normal text-muted small ms-2">{{ comment.createdAt|date('d/m/Y H:i') }}</span></div>
+                                    <div class="text-light opacity-75 mt-1">{{ comment.content|nl2br }}</div>
+                                </div>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <form method="post" action="{{ path('app_comment_delete', {'id': comment.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?');" class="ms-3">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
+                                        <button class="btn btn-sm btn-outline-danger border-0">Supprimer</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted small">Soyez le premier à donner votre avis !</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}

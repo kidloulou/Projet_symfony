@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'utilisateur{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card bg-dark border-secondary text-white shadow">
+                <div class="card-header border-secondary bg-transparent py-3">
+                    <h1 class="h3 card-title mb-0 text-primary">Modifier l'utilisateur</h1>
+                    <p class="text-muted small mb-0 mt-2">{{ user.email }}</p>
+                </div>
+                <div class="card-body p-4">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_label(form.email, null, {'label_attr': {'class': 'form-label text-white'}}) }}
+                            {{ form_widget(form.email) }}
+                            {{ form_errors(form.email) }}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form_label(form.roles, null, {'label_attr': {'class': 'form-label text-white'}}) }}
+                            {{ form_widget(form.roles) }}
+                            <div class="form-text text-muted">{{ form_help(form.roles) }}</div>
+                            {{ form_errors(form.roles) }}
+                        </div>
+
+                        <hr class="border-secondary my-4">
+
+                        <h5 class="text-white mb-3">Changer le mot de passe</h5>
+                        <div class="alert alert-warning border-warning bg-transparent">
+                            <small>⚠️ Laissez ces champs vides si vous ne souhaitez pas modifier le mot de passe.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.plainPassword.first, null, {'label_attr': {'class': 'form-label text-white'}}) }}
+                            {{ form_widget(form.plainPassword.first) }}
+                            {{ form_errors(form.plainPassword.first) }}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form_label(form.plainPassword.second, null, {'label_attr': {'class': 'form-label text-white'}}) }}
+                            {{ form_widget(form.plainPassword.second) }}
+                            {{ form_errors(form.plainPassword.second) }}
+                        </div>
+
+                        <div class="alert alert-info border-info bg-transparent">
+                            <strong>ℹ️ Hiérarchie des rôles :</strong>
+                            <ul class="mb-0 mt-2">
+                                <li><strong>Élève (ROLE_USER)</strong> : Peut consulter et commenter les cours</li>
+                                <li><strong>Professeur (ROLE_PROF)</strong> : Peut créer/modifier/supprimer ses cours + commenter</li>
+                                <li><strong>Admin (ROLE_ADMIN)</strong> : Accès complet à la plateforme</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <a href="{{ path('app_admin_user_index') }}" class="btn btn-outline-secondary">
+                                    Annuler
+                                </a>
+                                <form method="post" action="{{ path('app_admin_user_delete', {'id': user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.');" class="d-inline ms-2">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                    <button class="btn btn-outline-danger">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                                        </svg>
+                                        Supprimer l'utilisateur
+                                    </button>
+                                </form>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                                    <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+                                </svg>
+                                Enregistrer les modifications
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+
+            <!-- Statistiques de l'utilisateur -->
+            <div class="card bg-dark border-secondary text-white shadow mt-4">
+                <div class="card-header border-secondary bg-transparent py-3">
+                    <h2 class="h5 mb-0">Statistiques</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-6 mb-3">
+                            <div class="p-3 border border-secondary rounded">
+                                <h3 class="h2 text-primary mb-0">{{ user.articles|length }}</h3>
+                                <p class="text-muted mb-0">Cours créés</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="p-3 border border-secondary rounded">
+                                <h3 class="h2 text-success mb-0">{{ user.comments|length }}</h3>
+                                <p class="text-muted mb-0">Commentaires</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

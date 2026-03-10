@@ -1,0 +1,11 @@
+{% set confirmMessage = confirmMessage|default('Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.') %}
+{% set buttonText = buttonText|default('Supprimer') %}
+{% set buttonClass = buttonClass|default('btn btn-outline-danger btn-sm') %}
+
+<form method="post" action="{{ deletePath }}" onsubmit="return confirm('{{ confirmMessage }}');" class="d-inline">
+    <input type="hidden" name="_token" value="{{ csrfToken }}">
+    <button class="{{ buttonClass }} d-flex align-items-center gap-2">
+        {{ include('components/_trash_icon.html.twig') }}
+        {{ buttonText }}
+    </button>
+</form>
